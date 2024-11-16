@@ -49,6 +49,8 @@ public class ConsolaFRAME extends JFrame {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     e.consume();
 
+                    escribir = "";
+                    
                     String comando = salida.getText().substring(salida.getText().lastIndexOf(Direccion) + Direccion.length()).trim();
 
                     String[] partes = comando.split("\\s+");
@@ -60,8 +62,8 @@ public class ConsolaFRAME extends JFrame {
                         archivo = partes[1];
                     }
                     if (partes.length > 2) {
-                        for (int i = 2; i < partes.length; i++) {
-                            escribir += partes[i] + (i < partes.length - 1 ? " " : ""); 
+                        for (int indice = 2; indice < partes.length; indice++) {
+                            escribir += partes[indice] + (indice < partes.length - 1 ? " " : ""); 
                         }
                     }
 
