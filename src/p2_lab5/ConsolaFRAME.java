@@ -51,21 +51,24 @@ public class ConsolaFRAME extends JFrame {
 
                     String comando = salida.getText().substring(salida.getText().lastIndexOf(Direccion) + Direccion.length()).trim();
 
-                    int nombre = comando.indexOf(' ');
+                    String[] partes = comando.split("\\s+");
 
-                        if (nombre != -1) {
-                            userInput = comando.substring(0, nombre); 
-                            archivo = comando.substring(nombre + 1); 
-
-                            System.out.println("Comando: " + userInput);
-                            System.out.println("Texto después del espacio: " + archivo);
-                        } else {
-
-                            userInput = comando;
-                            System.out.println("Comando: " + userInput);
+                    if (partes.length > 0) {
+                        userInput = partes[0];
+                    }
+                    if (partes.length > 1) {
+                        archivo = partes[1];
+                    }
+                    if (partes.length > 2) {
+                        for (int i = 2; i < partes.length; i++) {
+                            escribir += partes[i] + (i < partes.length - 1 ? " " : ""); 
                         }
-                    
-                    
+                    }
+
+                    System.out.println("Comando: " + userInput);
+                    System.out.println("Archivo: " + archivo);
+                    System.out.println("Escribir: " + escribir);
+
                     try {
                         procesarComando(userInput, salida);
                     } catch (IOException ex) {
@@ -107,6 +110,7 @@ public class ConsolaFRAME extends JFrame {
         area.append("(c) Microsoft Corporation. All rights reserved\n\n");
         area.append(System.getProperty("user.dir") + "\n");
         area.setCaretPosition(area.getDocument().getLength());
+        area.append("\n/help para ver lista de commandos.\n");
     }
 
     private void procesarComando(String comando, JTextArea salida) throws IOException {
@@ -173,9 +177,9 @@ public class ConsolaFRAME extends JFrame {
                 break;
 
             case "escribir":
-                comandos.AddContenido(archivo, salida);
+                comandos.Cd(archivo);
+                comandos.AddContenido(salida,escribir);
                 break;
-
             case "leer":
                 comandos.Cd(archivo);
                 comandos.LeerBufferedReader(salida);
