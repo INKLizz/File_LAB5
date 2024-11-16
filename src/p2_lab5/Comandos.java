@@ -4,7 +4,6 @@
  */
 package p2_lab5;
 
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,10 +22,10 @@ import javax.swing.JTextArea;
  */
 public class Comandos {
 
-    private File Actual = null; 
-    private File Anterior = null; 
-    private File Anterior2 = null; 
-    private String Text = ""; 
+    private File Actual = null;
+    private File Anterior = null;
+    private File Anterior2 = null;
+    private String Text = "";
 
     void Cd(String direccion) {
         Anterior2 = Anterior;
@@ -34,7 +33,7 @@ public class Comandos {
         Actual = new File(direccion);
     }
 
-    boolean Mkdir(JTextArea CMD) { 
+    boolean Mkdir(JTextArea CMD) {
         boolean resultado = Actual.mkdirs();
         if (resultado) {
             Text = "Carpeta creada: " + Actual.getName() + "\n";
@@ -45,7 +44,7 @@ public class Comandos {
         return resultado;
     }
 
-    boolean Mfile(JTextArea CMD) throws IOException { 
+    boolean Mfile(JTextArea CMD) throws IOException {
         boolean resultado = Actual.createNewFile();
         if (resultado) {
             Text = "Archivo creado: " + Actual.getName() + "\n";
@@ -56,25 +55,41 @@ public class Comandos {
         return resultado;
     }
 
-    void Rm(JTextArea CMD) {
-        if (antidoto(Actual)) {
-            Text = "Borrado: " + Actual.getName() + "\n";
-        } else {
-            Text = "No se pudo borrar: " + Actual.getName() + "\n";
+    void Rm(JTextArea CMD) { // Borrar
+        File directorioRaiz = Actual;
+
+        if (Actual.isFile()) {
+            directorioRaiz = Actual.getAbsoluteFile();
         }
+
+        if (antidoto(directorioRaiz)) {
+            Text = "Borrado: " + directorioRaiz.getName() + "\n";
+        } else {
+            Text = "No se pudo borrar: " + directorioRaiz.getName() + "\n";
+        }
+
         añadirCMD(CMD);
+
     }
 
     boolean antidoto(File mf) {
         if (mf.isDirectory()) {
-            for (File child : mf.listFiles()) {
-                antidoto(child);
+            File[] archivos = mf.listFiles();
+
+            if (archivos != null) {
+                for (File archivo : archivos) {
+                    if (!antidoto(archivo)) {
+                        System.err.println("No se pudo borrar: " + archivo.getAbsolutePath());
+                        return false;
+                    }
+                }
             }
         }
+
         return mf.delete();
     }
 
-    void regresar(JTextArea CMD) { 
+    void regresar(JTextArea CMD) {
         if (Anterior != null) {
             Actual = Anterior;
             Anterior = Anterior2;
@@ -143,7 +158,7 @@ public class Comandos {
         añadirCMD(CMD);
     }
 
-    public void AddContenido(String texto, JTextArea CMD) { // Agregar
+    public void AddContenido(JTextArea CMD, String texto) { // Agregar
         try (FileWriter writer = new FileWriter(Actual, true); BufferedWriter bufferedWriter = new BufferedWriter(writer)) {
             bufferedWriter.write(" " + texto);
             Text = "Texto añadido al archivo: " + Actual.getName() + "\n";
@@ -187,7 +202,6 @@ public class Comandos {
     }
 
     private void añadirCMD(JTextArea CMD) {
-       CMD.append("\n" + Text);
+        CMD.append("\n" + Text);
     }
 }
-
